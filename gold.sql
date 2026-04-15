@@ -88,4 +88,21 @@ ON pc.cat_id= pe.ID
 
 
 
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+  SALES FINAL_TABLE
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+CREATE VIEW gold.dim_sales AS
+SELECT 
+      sls_ord_num AS order_num,
+      sls_prd_key AS product_key,
+      sls_order_dt AS order_date,
+      sls_ship_dt AS shipping_date,
+      sls_due_dt AS due_date,
+      sls_price AS price,
+      sls_quantity AS quantity,
+      sls_sales AS sales
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.crm_sales_details`
+
+
 
