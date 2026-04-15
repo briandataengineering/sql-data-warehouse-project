@@ -1,3 +1,6 @@
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+CLEANING CUSTOMER INFO DATA_TABLE
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SELECT *
 FROM `project-7dde7e10-dbf5-4abe-b54.silver.crm_cust_info` 
 
@@ -76,7 +79,9 @@ FROM (
 )
 WHERE ranking = 1 AND cst_id IS NOT NULL
 
-
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+CLEANING PRODUCT INFO DATA_TABLE
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 --Cleaning product info table
 SELECT * 
 FROM `project-7dde7e10-dbf5-4abe-b54.silver.crm_prd_info` 
@@ -188,4 +193,92 @@ SELECT
       prd_start_dt,
       LEAD(prd_start_dt) OVER(PARTITION BY prd_key ORDER BY prd_start_dt)-1 AS prd_end_dt
 FROM `project-7dde7e10-dbf5-4abe-b54.silver.crm_prd_info` 
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+CLEANING SALES DATA_TABLE
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SELECT * 
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.crm_sales_details` 
+
+--Cleaning start order sate column with 0
+
+SELECT 
+  sls_ord_num,
+  sls_prd_key,
+  sls_cust_id,
+  SAFE.PARSE_DATE('%Y%m%d', CAST(sls_order_dt AS STRING)) AS sls_order_dt,
+  SAFE.PARSE_DATE('%Y%m%d', CAST(sls_ship_dt AS STRING)) AS sls_ship_dt,
+  SAFE.PARSE_DATE('%Y%m%d', CAST(sls_due_dt AS STRING)) AS sls_due_dt,
+  sls_sales,
+  sls_quantity,
+  sls_price
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.crm_sales_details`
+
+--Checking sales, quantity and price quality issues
+SELECT 
+  sls_sales,
+  sls_quantity,
+  sls_price
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.crm_sales_details`
+WHERE  sls_sales != sls_quantity* sls_price
+OR sls_sales IS NULL OR sls_quantity IS NULL OR sls_price IS NULL
+OR sls_sales <=0 OR sls_quantity <=0 OR sls_price <=0
+ORDER BY sls_sales ASC
+
+
+--Cleaning sales, quantity and price columns
+SELECT 
+  sls_ord_num,
+  sls_prd_key,
+  sls_cust_id,
+  SAFE.PARSE_DATE('%Y%m%d', CAST(sls_order_dt AS STRING)) AS sls_order_dt,
+  SAFE.PARSE_DATE('%Y%m%d', CAST(sls_ship_dt AS STRING)) AS sls_ship_dt,
+  SAFE.PARSE_DATE('%Y%m%d', CAST(sls_due_dt AS STRING)) AS sls_due_dt,
+  CASE WHEN sls_sales IS NULL OR sls_sales <=0 OR sls_sales != sls_quantity* ABS(sls_price)
+            THEN sls_quantity* ABS(sls_price)
+            ELSE sls_sales
+            END AS sls_sales,
+    sls_quantity,
+  CASE WHEN sls_price IS NULL OR sls_price<= 0
+            THEN sls_sales/NULLIF(sls_quantity, 0)
+            ELSE sls_price
+            END AS sls_price
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.crm_sales_details`
+
+
+--Inserting data
+INSERT INTO `project-7dde7e10-dbf5-4abe-b54.silver.crm_sales_details`(
+  sls_ord_num,
+  sls_prd_key,
+  sls_cust_id,
+  sls_order_dt,
+  sls_ship_dt,
+  sls_due_dt,
+  sls_sales,
+  sls_quantity,
+  sls_price
+)
+SELECT 
+  sls_ord_num,
+  sls_prd_key,
+  sls_cust_id,
+  SAFE.PARSE_DATE('%Y%m%d', CAST(sls_order_dt AS STRING)) AS sls_order_dt,
+  SAFE.PARSE_DATE('%Y%m%d', CAST(sls_ship_dt AS STRING)) AS sls_ship_dt,
+  SAFE.PARSE_DATE('%Y%m%d', CAST(sls_due_dt AS STRING)) AS sls_due_dt,
+  CASE WHEN sls_sales IS NULL OR sls_sales <=0 OR sls_sales != sls_quantity* ABS(sls_price)
+            THEN sls_quantity* ABS(sls_price)
+            ELSE sls_sales
+            END AS sls_sales,
+    sls_quantity,
+  CASE WHEN sls_price IS NULL OR sls_price<= 0
+            THEN sls_sales/NULLIF(sls_quantity, 0)
+            ELSE sls_price
+            END AS sls_price
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.crm_sales_details`
+
+
+
+
+
 
