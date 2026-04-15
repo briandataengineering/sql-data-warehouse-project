@@ -278,6 +278,77 @@ SELECT
 FROM `project-7dde7e10-dbf5-4abe-b54.silver.crm_sales_details`
 
 
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+CLEANING SALES ERP CUSTOMER DATA_TABLE
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SELECT * 
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.erp_CUST_AZ12` 
+
+
+--Checking white spaces in cid column
+SELECT * 
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.erp_CUST_AZ12` 
+WHERE CID != TRIM(CID)
+
+--checking unique values is gender column
+SELECT DISTINCT(GEN)
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.erp_CUST_AZ12` 
+
+--cid and gender cleaning
+SELECT 
+      CASE WHEN CID LIKE 'NAS%' THEN SUBSTRING(CID, 4, LENGTH(CID))
+           ELSE CID
+           END cid,
+      BDATE as bdate,
+      CASE WHEN UPPER(TRIM(GEN)) = 'F' THEN 'Female'
+           WHEN UPPER(TRIM(GEN)) = 'M' THEN 'Male'
+           WHEN UPPER(TRIM(GEN)) = '' THEN 'n/a'
+           WHEN UPPER(TRIM(GEN)) IS NULL THEN 'n/a'
+           ELSE GEN
+           END AS gen
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.erp_CUST_AZ12` 
+
+
+
+--CTE to check changes in gender column
+WITH erp_cust AS(
+  SELECT 
+      CID AS cid,
+      BDATE as bdate,
+      CASE WHEN UPPER(TRIM(GEN)) = 'F' THEN 'Female'
+           WHEN UPPER(TRIM(GEN)) = 'M' THEN 'Male'
+           WHEN UPPER(TRIM(GEN)) = '' THEN 'n/a'
+           WHEN UPPER(TRIM(GEN)) IS NULL THEN 'n/a'
+           ELSE GEN
+           END AS gen
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.erp_CUST_AZ12`
+
+)
+SELECT DISTINCT(gen)
+FROM erp_cust
+
+
+--Inserting data back to silver layer
+INSERT INTO `project-7dde7e10-dbf5-4abe-b54.silver.erp_CUST_AZ12` (
+  cid,
+  bdate,
+  gen
+)
+SELECT 
+      CASE WHEN CID LIKE 'NAS%' THEN SUBSTRING(CID, 4, LENGTH(CID))
+           ELSE CID
+           END cid,
+      BDATE as bdate,
+      CASE WHEN UPPER(TRIM(GEN)) = 'F' THEN 'Female'
+           WHEN UPPER(TRIM(GEN)) = 'M' THEN 'Male'
+           WHEN UPPER(TRIM(GEN)) = '' THEN 'n/a'
+           WHEN UPPER(TRIM(GEN)) IS NULL THEN 'n/a'
+           ELSE GEN
+           END AS gen
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.erp_CUST_AZ12` 
+
+
+
 
 
 
