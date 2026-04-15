@@ -347,6 +347,36 @@ SELECT
            END AS gen
 FROM `project-7dde7e10-dbf5-4abe-b54.silver.erp_CUST_AZ12` 
 
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+CLEANING SALES ERP LOCATION DATA_TABLE
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+SELECT * 
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.erp_LOC_A101` 
+
+--Cleaning CID and country column
+SELECT 
+      REPLACE(string_field_0, '-','') AS cid,
+      CASE WHEN TRIM(string_field_1 ) IN('United States','US', 'USA' ) THEN 'United States of America'
+           WHEN TRIM(string_field_1 )= 'DE' THEN 'Germany'
+          WHEN TRIM(string_field_1 ) = ''  OR TRIM(string_field_1 ) IS NULL THEN 'n/a'
+           ELSE TRIM(string_field_1 )
+           END AS cntry
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.erp_LOC_A101` 
+
+
+INSERT INTO `project-7dde7e10-dbf5-4abe-b54.silver.erp_LOC_A101` (
+  cid,
+  cntry
+)
+SELECT 
+      REPLACE(string_field_0, '-','') AS cid,
+      CASE WHEN TRIM(string_field_1 ) IN('United States','US', 'USA' ) THEN 'United States of America'
+           WHEN TRIM(string_field_1 )= 'DE' THEN 'Germany'
+          WHEN TRIM(string_field_1 ) = ''  OR TRIM(string_field_1 ) IS NULL THEN 'n/a'
+           ELSE TRIM(string_field_1 )
+           END AS cntry
+FROM `project-7dde7e10-dbf5-4abe-b54.silver.erp_LOC_A101` 
 
 
 
